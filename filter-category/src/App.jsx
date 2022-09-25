@@ -1,23 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Categories from "./Categories";
-import item from "./data";
 import Menu from "./Menu";
 
 const App = () => {
-  //lấy ra tất cả các danh mục categories
-  const allCategories = ["all", ...new Set(item.map((item) => item.category))];
-  const [menuItems, setMenuItems] = useState(item);
-  const [categories, setCategories] = useState(allCategories);
+  const [menuItems, setMenuItems] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  //hàm filter categories
-  const filterCategories = (categoryitems) => {
-    if (categoryitems === "all") {
-      setMenuItems(item);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        "https://course-api.com/react-store-products"
+      );
+      const data = await response.json();
+      setMenuItems(data);
+      setCategories(data);
+    };
+    fetchData();
+  }, []);
+
+  const filterCategory = (categoryItem) => {
+    if (categoryItem === "all") {
+      setMenuItems(menuItems);
       return;
     }
-    //lọc ra các phần tử trong mảng có cùng categoryitems
-    const newItems = item.filter((item) => item.category === categoryitems);
+    const newItems = categories.filter((c) => c.category === categoryItem);
     setMenuItems(newItems);
+    console.log(categoryItem);
   };
 
   return (
@@ -27,10 +35,7 @@ const App = () => {
           <h2>our menu</h2>
           <div className="underline"></div>
         </div>
-        <Categories
-          categories={categories}
-          filterCategories={filterCategories}
-        />
+        <Categories categories={categories} filterCategory={filterCategory} />
         <Menu menuItems={menuItems} />
       </section>
     </main>
