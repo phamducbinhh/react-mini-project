@@ -25,7 +25,6 @@ const App = () => {
     }
     const newItems = categories.filter((c) => c.category === categoryItem);
     setMenuItems(newItems);
-    console.log(categoryItem);
   };
 
   return (
